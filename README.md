@@ -1,4 +1,11 @@
 # league-of-legends-predictive-dragons
-Predictive modeling using a dataset from 2022, competitive league matches about which team can secure more dragons. Originally done as a class project for DSC80.  
+Predictive modeling using a dataset from 2022, competitive league matches about which team can secure more dragons. Originally done as a class project for DSC80 by Annie Pham.  
   
-This is some test text!
+## Problem Identification  
+**Question:** Can you predict whether a team took more dragons based on the side they start on and their stats at 15 minutes?  
+  
+This question is based on an exploratory data analysis I conducted on the same 2022 dataset, which can be found at [league-of-legends-neutral-obj-analysis](https://phamann000.github.io/league-of-legends-neutral-obj-analysis/). During my exploration, I found that teams which had taken more dragons, an important neutral objective that can be taken by either team, than their enemy seemed to have a tendency to win their game more often than teams which had taken less dragons than their enemies.  
+With this in mind, I wanted to see if I could predict whether a team would end with more dragons or not.  
+To do this, I used **Binary Classifiers** with the column =='more_drags'== as a response variable, either True if the team ended with more dragons taken and False otherwise. The features I chose to try to predict this response variable are the stats of the team at 15 minutes, like =='golddiffat15'== or =='csdiffat15'==. I chose these features because they can be recorded as the game is still in progress before we know whether or not a team will end with more dragons or not. Because of this, these features would make good predictors. More information about the features I used and how I used them can be found in more detail below in the **Baseline Model** and **Final Model** section respectively.  
+To measure how "good" my model is at predicting, I will be using ==accuracy==. I chose this because of the binary nature of the response model, and whether a team ends with more dragons or not depends on their opponent, leading to the makeup of True:False values being reasonably around 50/50. Because of this even split, I believe that accuracy makes a good measure of prediction as opposed to precision, recall, or F-1 score which may be better under circumstances where either False Postives or False Negatives is more important.
+
