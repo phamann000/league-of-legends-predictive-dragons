@@ -7,8 +7,9 @@ Predictive modeling using a dataset from 2022, competitive league matches about 
 This question is based on an exploratory data analysis I conducted on the same 2022 dataset, which can be found at [league-of-legends-neutral-obj-analysis](https://phamann000.github.io/league-of-legends-neutral-obj-analysis/).  
 During my exploration, I found that teams which had taken more dragons, an important neutral objective that can be taken by either team, than their enemy seemed to have a tendency to win their game more often than teams which had taken less dragons than their enemies.  
 With this in mind, I wanted to see if I could predict whether a team would end with more dragons or not. The first thing I did was clean the data. One of the biggest parts of this included dropping the rows that referred to individual players, while keeping rows that were the team summary, which combined all players on one side, for that game. I also kept a comparatively small number of columns (or features) compared to the entirety of the original dataframe.  
-The features I chose to try to predict this response variable are the side the team starts on and the stats of the team at 15 minutes, like <mark>'golddiffat15'</mark> or <mark>'csdiffat15'</mark>. I chose these features because they can be recorded as the game is still in progress before we know whether or not a team will end with more dragons or not. Because of this, these features would make good predictors. More information about the features I used and how I used them can be found in more detail below in the **Baseline Model** and **Final Model** section respectively.  
-In working with these features I chose to use **Binary Classifiers** with the column <mark>'more_drags'</mark> as a response variable, either True if the team ended with more dragons taken and False otherwise. 
+The features I chose to try to predict this response variable are the side the team starts on and the stats of the team at 15 minutes, like <mark>'golddiffat15'</mark> or <mark>'csdiffat15'</mark>.  
+I chose these features because they can be recorded as the game is still in progress before we know whether or not a team will end with more dragons or not. Because of this, these features would make good predictors. More information about the features I used and how I used them can be found in more detail below in the **Baseline Model** and **Final Model** section respectively.  
+In working with these features I chose to use **Binary Classifiers** with the column <mark>'more_drags'</mark> as a response variable, either True if the team ended with more dragons taken and False otherwise.  
 To measure how "good" my model is at predicting, I will be using <mark>accuracy</mark>. I chose this because of the binary nature of the response model, and whether a team ends with more dragons or not depends on their opponent, leading to the makeup of True:False values being reasonably around 50/50. Because of this even split, I believe that accuracy makes a good measure of prediction as opposed to precision, recall, or F-1 score which may be better under circumstances where either False Postives or False Negatives is more important.  
   
 ## Baseline Model  
@@ -19,6 +20,10 @@ In my Baseline Model, I wanted to use the following features:
   
 These features were chosen because they would measure how ahead or behind in gold each team is with 'golddiffat15' being a direct measure and 'csdiffat15' being a more indirect measure. Additionally, 'csdiffat15' can also be indicator of how much pressure one team has over the other because in order for a player to increase their cs, they will often be in a position where the enemy can attempt to hurt or otherwise drive them away. Overall these two features can show how strong a team is, and I predicted that since dragons are a larger objective that is more difficult to take, stronger teams would have an advantage in taking them. For the baseline model, I chose not to transform these two features and just left them as is in the model.  
 I also chose to use the <mark>'side'</mark> column as a feature by OneHotEncoding it. I chose to include this feature because one side, the 'red' side actually has easier access to the location of the dragon as there are more direct routes to access it while the 'blue' side is blocked off by the back wall of where the dragon is located.  
+
+![League of Legends Map with Dragon Pathing](/assets/league_dragon_pathing.png)  
+*screenshot of the game 'League of Legends' with blue arrows representing the paths blue side may take into the dragon pit and red arrows representing the paths red side may take into the dragon pit*  
+
 
 Additionally my response variable is:  
 - <mark>'more_drags':</mark>  Nominal Variable, True (or 1) when the team ends with more dragons than their opponent and False (or 0) otherwise.  
@@ -70,7 +75,7 @@ Along with OneHotEncoding 'side', I also chose to binarize 'assistsat15' with a 
 ### The Modeling Algorithm
 As seen in the dataframe, RandomForestClassifier had a tendency to have better accuracy on average. This is because DecisionTreeClassifiers have a tendency to overfit while the RandomForestClassifier, which uses many DecisionTreeClassifiers and averages them, is better at generalizng.  
 However RandomForestClassifier can still have tendencies to overfit, even if they tend to be better than DecisionTreeClassifiers. To limit this overfitting, I created models that found the accuracy of different combinations of 'max_depth' and 'n_estimators' to see which one would perform best on unseen data on average. Here is the head of the resulting dataframe...  
-  
+
 | depth, estimator   |   train_score |   test_score |
 |:-------------------|--------------:|-------------:|
 | (2, 2)             |      0.703684 |     0.707317 |
@@ -87,7 +92,7 @@ And here is the best combination of depth and estimator, found by the max value 
 
 With all of this combined I now have my final model.  
 ### The Results  
-When running the baseline model on unseen data, I got an accuracy of 0.6075073516692614. However with my final model, my accuracy on unseen data resulted in an accuracy of 0.724096177131984 which I think is a huge improvement. It shows that my final model ended up being much better at generalzing to unseen data, which is exactly what I wanted.  
+When running the baseline model on unseen data, I got an accuracy of 0.6075073516692614. However with my final model, my accuracy on unseen data resulted in an accuracy of 0.724096177131984 which I think is a huge improvement. It shows that my final model ended up being much better at generalizing to unseen data, which is exactly what I wanted.  
 With this I was happy with how my final model turned out, and ran the entire 2022 competitive matches dataset to get the following confusion matrix.  
 ![Confusion Matrix of Predicting Which Team has More Dragons](/assets/league_conf_mat.png)  
 As is illustrated above, my final model ends up being pretty good at predicting which team has taken more Dragons.  
@@ -102,4 +107,4 @@ Finally, I wanted to see if my model was equally good at predicting whether or n
 - **Significance Level**: 0.05, standard across most industries. 
 - **P-value**: 0.3201  
 <iframe src="assets/accuracy_differences.html" width=900 height=500 frameBorder=0></iframe>  
-**Conclusion**: Because are p-value of 0.3201 is greater than the significance level of 0.05, I fail to reject the Null Hypothesis, the difference in accuracy we see between LCS teams and Worlds team are likely due to random chance. This is illustrated in the above Empirical Distribution where the orange line represents the observed difference in accuracy between Worlds and LCS. The observed difference falls well within the differences outputted by random chance, and because of this, it is unlikely that the model is unfair between these two competitice series.
+**Conclusion**: Because the p-value of 0.3201 is greater than the significance level of 0.05, I fail to reject the Null Hypothesis, the difference in accuracy we see between LCS teams and Worlds team are likely due to random chance. This is illustrated in the above Empirical Distribution where the orange line represents the observed difference in accuracy between Worlds and LCS. The observed difference falls well within the differences outputted by random chance, and because of this, it is unlikely that the model is unfair between these two competitice series.
