@@ -90,4 +90,16 @@ With all of this combined I now have my final model.
 When running the baseline model on unseen data, I got an accuracy of 0.6075073516692614. However with my final model, my accuracy on unseen data resulted in an accuracy of 0.724096177131984 which I think is a huge improvement. It shows that my final model ended up being much better at generalzing to unseen data, which is exactly what I wanted.  
 With this I was happy with how my final model turned out, and ran the entire 2022 competitive matches dataset to get the following confusion matrix.  
 ![Confusion Matrix of Predicting Which Team has More Dragons](/assets/league_conf_mat.png)  
-As is illustrated above, my final model ends up being pretty good at predicting which team has more_drags.
+As is illustrated above, my final model ends up being pretty good at predicting which team has taken more Dragons.  
+  
+## Fairness Analysis  
+Finally, I wanted to see if my model was equally good at predicting whether or not a team has taken more Dragons across *two different competitive series*. The competitive series I chose were <mark>Worlds</mark> (WLDs), which is an international competition that takes the best teams from across the world and pits them against each other, and the <mark>LCS</mark>, North America's national competition.  
+- **Groups**: Worlds league vs LCS
+- **Evaluation Metric**: Accuracy, as stated previously I expect their to be a near 50:50 split between the two values of the response variable more_drags so accuracy should be a good measure to evaluate the model. 
+- **Null Hypothesis**: The model is fair. Its accuracy for WLDs teams and LCS teams are roughly the same, and any differences are due to random chance.  
+- **Alternative Hypothesis**: The model is unfair. Its accuracy for WLDs teams is higher than its accuracy for LCS teams.  
+- **Test Statistic**: Difference in Accuracy 
+- **Significance Level**: 0.05, standard across most industries. 
+- **P-value**: 0.3201  
+<iframe src="assets/accuracy_differences.html" width=900 height=500 frameBorder=0></iframe>  
+**Conclusion**: Because are p-value of 0.3201 is greater than the significance level of 0.05, I fail to reject the Null Hypothesis, the difference in accuracy we see between LCS teams and Worlds team are likely due to random chance. This is illustrated in the above Empirical Distribution where the orange line represents the observed difference in accuracy between Worlds and LCS. The observed difference falls well within the differences outputted by random chance, and because of this, it is unlikely that the model is unfair between these two competitice series.
